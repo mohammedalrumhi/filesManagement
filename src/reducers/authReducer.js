@@ -3,6 +3,7 @@ const initialState = {
   email: "",
   password: "",
   errorMessage: "",
+  loading: false,
 };
 
 const authReducer = (state = initialState, action) => {
@@ -21,6 +22,11 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         errorMessage: action.payload,
+      };
+    case "SET_LOADING":
+      return {
+        ...state,
+        loading: action.payload,
       };
     case "RESET_FORM":
       return initialState;

@@ -1,0 +1,49 @@
+.drag-drop-container {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border 0.3s ease;
+
+  &.dragging {
+    border-color: #007bff; /* Change border color when dragging */
+  }
+
+  p {
+    margin-bottom: 15px;
+    font-size: 18px;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+
+    div {
+      margin-bottom: 5px;
+    }
+  }
+}
+
+button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3; /* Darker color on hover */
+  }
+}
+
+.progress-container {
+  padding: 2rem;
+  border: 1px solid #eee;
+}

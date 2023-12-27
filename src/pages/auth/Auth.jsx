@@ -2,7 +2,7 @@
 import React, { useContext, useReducer } from "react";
 import style from "./auth.module.scss";
 import authReducer from "../../reducers/authReducer";
-import { auth } from "../../firebase/firebase";
+import { auth, getUserById } from "../../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -17,10 +17,11 @@ const Auth = () => {
 
   const { dispatch: authDispatch } = useContext(AuthContext);
 
-  const { email, password, errorMessage } = state;
+  const { email, password, errorMessage, loading } = state;
   const toPage = useNavigate();
 
   const handleLogin = async (e) => {
+    dispatch({ type: "SET_LOADING", payload: true });
     e.preventDefault();
 
     try {
@@ -30,18 +31,25 @@ const Auth = () => {
         email,
         password
       );
+
       // If successful, you can access userCredential.user
       if (userCredential.user) {
+        const userObject = await getUserById("users", userCredential.user.uid);
         //console.log("this is user " + userCredential.user.email);
-        authDispatch({ type: "LOGIN", payload: userCredential.user });
-        toPage("/home");
+        authDispatch({
+          type: "LOGIN",
+          payload: { auth: userCredential.user, user: userObject },
+        });
+        toPage("/");
       }
 
       // Reset the form after successful login
+      dispatch({ type: "SET_LOADING", payload: false });
       dispatch({ type: "RESET_FORM" });
     } catch (error) {
       // Handle login errors and display error message
-      dispatch({ type: "SET_ERROR_MESSAGE", payload: error.message });
+      dispatch({ type: "SET_LOADING", payload: false });
+      dispatch({ type: "SET_ERROR_MESSAGE", payload: "هناك خطا في المدخلات" });
     }
   };
 
@@ -78,14 +86,22 @@ const Auth = () => {
                 }
               />
             </div>
-
+            {loading && (
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            )}
             {errorMessage && (
               <div className="alert alert-danger" role="alert">
                 {errorMessage}
               </div>
             )}
 
-            <button type="submit" className="btn btn-primary">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={loading}
+            >
               دخول
             </button>
           </form>

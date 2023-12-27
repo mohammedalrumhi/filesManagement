@@ -6,23 +6,42 @@ import Auth from "./pages/auth/Auth";
 import Home from "./pages/home/Home";
 import { Children, useContext } from "react";
 import { AuthContext } from "./contexts/AuthContext";
+import Files from "./pages/files/Files";
 
 function App() {
   const { currentUser } = useContext(AuthContext);
 
-  const RequiredAuth = ({ Children }) => {
-    return currentUser ? Children : <Navigate to="/login" />;
+  const RequiredAuth = ({ children }) => {
+    return currentUser ? children : <Navigate to="/login" />;
+  };
+
+  const IsLogged = ({ children }) => {
+    return currentUser ? <Navigate to="/" /> : children;
   };
   return (
     <BrowserRouter>
       <Routes>
-        {/* this is routes  */}
-        <Route path="/login" element={<Auth />}></Route>
         <Route
-          path="/home"
+          path="/"
           element={
             <RequiredAuth>
               <Home />
+            </RequiredAuth>
+          }
+        ></Route>
+        <Route
+          path="/login"
+          element={
+            <IsLogged>
+              <Auth />
+            </IsLogged>
+          }
+        ></Route>
+        <Route
+          path="/files"
+          element={
+            <RequiredAuth>
+              <Files />
             </RequiredAuth>
           }
         ></Route>
