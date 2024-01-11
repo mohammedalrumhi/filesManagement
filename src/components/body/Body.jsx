@@ -5,7 +5,7 @@ import {
   getCollectionById,
 } from "../../firebase/firebase";
 import { AuthContext } from "../../contexts/AuthContext";
-import EditGroup from "../models/editGroup/editGroup";
+import EditGroup from "../models/editGroup/EditGroup";
 
 const Body = ({ updateFeed }) => {
   const { currentUser } = useContext(AuthContext);
