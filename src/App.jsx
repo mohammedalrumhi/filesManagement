@@ -2,9 +2,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import "./App.css";
 
+
 import Auth from "./pages/auth/Auth";
 import Home from "./pages/home/Home";
-import { Children, useContext } from "react";
+import { useContext } from "react";
 import { AuthContext } from "./contexts/AuthContext";
 import Files from "./pages/files/Files";
 
@@ -38,7 +39,7 @@ function App() {
           }
         ></Route>
         <Route
-          path="/files"
+          path="/files/:groupId"
           element={
             <RequiredAuth>
               <Files />

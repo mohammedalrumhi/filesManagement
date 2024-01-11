@@ -2,10 +2,7 @@ import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import styles from "./group.module.scss";
-import {
-  createGroup,
-  getCollections,
-} from "../../../firebase/firebase";
+import { createGroup, getCollections } from "../../../firebase/firebase";
 import { serverTimestamp } from "firebase/firestore";
 import Select from "react-select";
 function GroupModel({ isShow, setShow, setUpdateFeed, updateFeed }) {
@@ -15,7 +12,6 @@ function GroupModel({ isShow, setShow, setUpdateFeed, updateFeed }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [selectedOptions, setSelectedOptions] = useState([]);
-
 
   const restModel = () => {
     setName("");
@@ -63,7 +59,7 @@ function GroupModel({ isShow, setShow, setUpdateFeed, updateFeed }) {
     };
 
     fillUsers();
-  }, []);
+  }, [isShow]);
   return (
     <>
       <Modal

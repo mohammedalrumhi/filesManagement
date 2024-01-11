@@ -1,46 +1,69 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import styles from "./user.module.scss";
-import { createUser } from "../../../firebase/firebase";
+import styles from "./editgroup.module.scss";
+import {
+  createGroup,
+  getCollections,
+  updateGroup,
+} from "../../../firebase/firebase";
 import { serverTimestamp } from "firebase/firestore";
-
-function UserModel({ isShow, setShow }) {
-  const [userData, setUserData] = useState({ email: "", password: "" });
+import Select from "react-select";
+function EditGroup({ isShow, setShow, editedGroup, groupId }) {
+  const [name, setName] = useState(editedGroup.name);
+  const [allList, setAllList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState(editedGroup.ids);
 
+  console.log(editedGroup.name);
   const restModel = () => {
-    setUserData({ email: "", password: "" });
+    setName("");
     setLoading(false);
     setMessage("");
     setError("");
+    setSelectedOptions([]);
   };
 
-  const handleLogin = (e) => {
+  const handleEditGroup = async (e) => {
     setLoading(true);
     e.preventDefault();
-
-    createUser(userData.email, userData.password, {
-      role: "user",
-      date: serverTimestamp(),
-    })
-      .then((newUser) => {
-        // Handle success
-
-        setMessage("تم إضافة المستخدم");
-        setLoading(false);
-        setUserData({ email: "", password: "" });
-        setError("");
-      })
-      .catch((error) => {
-        // Handle error
-        setLoading(false);
-
-        setError("حدث خطا او أن المستخدم موجود");
+    try {
+      await updateGroup(groupId, {
+        name: name,
+        ids: selectedOptions,
       });
+
+      setMessage("تم تعديل المجموعة");
+    } catch (erorr) {
+      setError("خطا في تعديل المجموعة");
+    }
+
+    setLoading(false);
   };
+
+  const handleSelectChange = (selectedValues) => {
+    setSelectedOptions(selectedValues);
+  };
+
+  useEffect(() => {
+    const fillUsers = async () => {
+      const idList = [];
+      const collectionUsers = await getCollections("users");
+      collectionUsers.forEach((doc) => {
+        const data = doc.data();
+        if (data.email) {
+          idList.push({ value: doc.id, label: data.email }); // Push email to the idsList array
+        }
+      });
+
+      setAllList(idList);
+    };
+
+    fillUsers();
+  }, []);
+
   return (
     <>
       <Modal
@@ -53,7 +76,7 @@ function UserModel({ isShow, setShow }) {
       >
         <Modal.Header>
           <Modal.Title id="example-modal-sizes-title-lg">
-            إضافة مستخدم
+            تعديل مجموعة
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -61,41 +84,40 @@ function UserModel({ isShow, setShow }) {
             <div className={styles.login}>
               <div className={styles.wrapperLogin}>
                 <div className="container">
-                  <h2> إضافة مستخدم للطلاب</h2>
-                  <form onSubmit={handleLogin} className={styles.loginForm}>
+                  <h2> تعديل مجموعة </h2>
+                  <form onSubmit={handleEditGroup} className={styles.loginForm}>
                     <div className="form-group">
-                      <label htmlFor="email">البريد الإلكتروني</label>
+                      <label htmlFor="name"> اسم المجموعة</label>
                       <input
-                        type="email"
+                        required
+                        type="text"
                         className="form-control"
-                        id="email"
-                        placeholder="البريد الإلكتروني"
-                        onChange={(e) =>
-                          setUserData({ ...userData, email: e.target.value })
-                        }
+                        id="name"
+                        placeholder="اسم المجموعة"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                       />
                     </div>
 
                     <div className="form-group">
-                      <label htmlFor="password">كلمة المرور</label>
-                      <input
-                        type="password"
-                        className="form-control"
-                        id="password"
-                        placeholder="كلمة المرور"
-                        value={userData.password}
-                        onChange={(e) =>
-                          setUserData({ ...userData, password: e.target.value })
-                        }
-                      />
+                      <label htmlFor="password">
+                        المستخدمين المصرحين بدخول المجموعة{" "}
+                      </label>
+                      {allList.length > 0 && (
+                        <Select
+                          required
+                          options={allList}
+                          isMulti
+                          onChange={handleSelectChange} // Set onChange to handle selected options
+                          value={selectedOptions}
+                        />
+                      )}
                     </div>
-
                     {loading && (
-                      <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                      <div className="spinner-border" role="status">
+                        <span className="visually-hidden">Loading...</span>
                       </div>
                     )}
-
                     {message && (
                       <div className="alert alert-success" role="alert">
                         {message}
@@ -112,7 +134,7 @@ function UserModel({ isShow, setShow }) {
                       className="btn btn-primary"
                       disabled={loading}
                     >
-                      إضافة المستخدم
+                      تعديل المجموعة
                     </button>
                   </form>
                 </div>
@@ -145,11 +167,18 @@ function UserModel({ isShow, setShow }) {
                   </tr>
                 </tbody>
               </table>
-            </div> */}
+            </div>
+          </div> */}
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShow(false)}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              restModel();
+              setShow(false);
+            }}
+          >
             إغلاق
           </Button>
         </Modal.Footer>
@@ -158,4 +187,4 @@ function UserModel({ isShow, setShow }) {
   );
 }
 
-export default UserModel;
+export default EditGroup;

@@ -1,12 +1,9 @@
-// Inside your Auth component
 import React, { useContext, useReducer } from "react";
-import style from "./auth.module.scss";
-import authReducer from "../../reducers/authReducer";
-import { auth, getUserById } from "../../firebase/firebase";
-import { useNavigate } from "react-router-dom";
-
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { AuthContext } from "../../contexts/AuthContext";
+import { auth, getUserById } from "../../firebase/firebase";
+import { useNavigate } from "react-router-dom";
+import authReducer from "../../reducers/authReducer";
 
 const Auth = () => {
   const [state, dispatch] = useReducer(authReducer, {
@@ -25,17 +22,14 @@ const Auth = () => {
     e.preventDefault();
 
     try {
-      // Sign in with email and password using Firebase
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
 
-      // If successful, you can access userCredential.user
       if (userCredential.user) {
         const userObject = await getUserById("users", userCredential.user.uid);
-        //console.log("this is user " + userCredential.user.email);
         authDispatch({
           type: "LOGIN",
           payload: { auth: userCredential.user, user: userObject },
@@ -43,28 +37,36 @@ const Auth = () => {
         toPage("/");
       }
 
-      // Reset the form after successful login
       dispatch({ type: "SET_LOADING", payload: false });
       dispatch({ type: "RESET_FORM" });
     } catch (error) {
-      // Handle login errors and display error message
       dispatch({ type: "SET_LOADING", payload: false });
       dispatch({ type: "SET_ERROR_MESSAGE", payload: "هناك خطا في المدخلات" });
     }
   };
 
   return (
-    <div className={style.login}>
-      <div className={style.wrapperLogin}>
-        <div className="container">
-          <h2>الدخول للنظام</h2>
-          <form onSubmit={handleLogin} className={style.loginForm}>
-            <div className="form-group">
-              <label htmlFor="email">البريد الإلكتروني</label>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-800">
+            الدخول للنظام
+          </h2>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+       
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="email" className="sr-only">
+                البريد الإلكتروني
+              </label>
               <input
-                type="email"
-                className="form-control"
                 id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="البريد الإلكتروني"
                 value={email}
                 onChange={(e) =>
@@ -72,13 +74,17 @@ const Auth = () => {
                 }
               />
             </div>
-
-            <div className="form-group">
-              <label htmlFor="password">كلمة المرور</label>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                كلمة المرور
+              </label>
               <input
-                type="password"
-                className="form-control"
                 id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="كلمة المرور"
                 value={password}
                 onChange={(e) =>
@@ -86,26 +92,27 @@ const Auth = () => {
                 }
               />
             </div>
-            {loading && (
-              <div className="spinner-border" role="status">
+          </div>
+          {loading && (
+            <div className="flex justify-center">
+              <div className="spinner-border text-indigo-500" role="status">
                 <span className="visually-hidden">Loading...</span>
               </div>
-            )}
-            {errorMessage && (
-              <div className="alert alert-danger" role="alert">
-                {errorMessage}
-              </div>
-            )}
-
+            </div>
+          )}
+          {errorMessage && (
+            <div className="text-red-500 text-center">{errorMessage}</div>
+          )}
+          <div>
             <button
               type="submit"
-              className="btn btn-primary"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               disabled={loading}
             >
               دخول
             </button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   );

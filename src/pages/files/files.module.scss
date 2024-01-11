@@ -14,6 +14,9 @@
   .addCard {
     min-height: 150px;
     max-height: 150px;
+    .countProgress {
+      color: rgb(42, 165, 69);
+    }
   }
   .fileContainer {
     padding: 40px;

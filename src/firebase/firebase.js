@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { v4 as uuidv4 } from "uuid";
 import {
   getStorage,
   ref,
@@ -18,6 +19,7 @@ import {
   where,
   query,
   serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
 
 // Your web app's Firebase configuration
@@ -75,6 +77,19 @@ export const createGroup = async (data) => {
     // return userCredential.user;
   } catch (error) {
     console.error("Error creating user:", error);
+    throw error;
+  }
+};
+
+export const updateGroup = async (groupId, newData) => {
+  try {
+    const groupRef = doc(collection(firestore, "groups"), groupId);
+
+    await updateDoc(groupRef, newData);
+
+    console.log("Group updated successfully!");
+  } catch (error) {
+    console.error("Error updating group:", error);
     throw error;
   }
 };
@@ -147,6 +162,22 @@ export const getUserById = async (collectionName, userId) => {
     return null;
   }
 };
+export const getCollectionById = async (collectionName, id) => {
+  try {
+    const userDocRef = doc(firestore, collectionName, id);
+    const userDocSnapshot = await getDoc(userDocRef);
+
+    if (userDocSnapshot.exists()) {
+      return userDocSnapshot.data();
+    } else {
+      console.error("User document doesn't exist");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  }
+};
 
 //this
 export const getCollectionsWithCondition = async (name, valueToCheck) => {
@@ -200,45 +231,59 @@ export const getCollectionsWithCondition = async (name, valueToCheck) => {
 //   }
 // };
 
-export const handleFileUpload = (files, groupUid, progressCallback) => {
+export const handleFileUpload = async (files, groupUid, progressCallback) => {
+  console.log("called function file upload");
+  if (!files || !Array.isArray(files) || files.length === 0) {
+    throw new Error("No files to upload");
+  }
+
   const storageRef = ref(storage, groupUid);
   const totalFiles = files.length;
   let filesUploaded = 0;
 
-  return new Promise((resolve, reject) => {
-    files.forEach(async (file) => {
-      const fileRef = ref(storageRef, file.name);
-      const uploadTask = uploadBytesResumable(fileRef, file);
+  for (const file of files) {
+    const randomFileName = `${uuidv4()}_${file.name}`;
+    console.log(randomFileName);
+    const fileRef = ref(storageRef, randomFileName);
+    const uploadTask = uploadBytesResumable(fileRef, file);
 
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          progressCallback(progress);
-        },
-        (error) => {
-          console.error("Error uploading file:", error);
-          reject(error);
-        },
-        async () => {
-          filesUploaded++;
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          const filesRef = doc(collection(firestore, "files"));
-          await setDoc(filesRef, {
-            name: file.name,
-            path: downloadURL,
-            timestamp: serverTimestamp(),
-            groupUid: groupUid,
-          });
+    try {
+      await new Promise((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            progressCallback(progress);
+          },
+          (error) => {
+            console.error("Error uploading file:", error);
+            reject(error);
+          },
+          async () => {
+            filesUploaded++;
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            const filesRef = doc(collection(firestore, "files"));
+            await setDoc(filesRef, {
+              name: randomFileName,
+              path: downloadURL,
+              timestamp: serverTimestamp(),
+              groupUid: groupUid,
+            });
 
-          if (filesUploaded === totalFiles) {
-            resolve();
+            if (filesUploaded === totalFiles) {
+              console.log("now done uploading!!!");
+              resolve();
+            }
           }
-        }
-      );
-    });
-  });
+        );
+      });
+    } catch (error) {
+      // Handle errors here
+      console.error("Error uploading file:", error);
+      throw error;
+    }
+  }
 };
 
 export default app;

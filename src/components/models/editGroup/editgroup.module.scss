@@ -1,0 +1,46 @@
+.addUser {
+  width: 100%;
+  height: calc(100hv - 500px);
+
+  .login {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    .wrapperLogin {
+      border-radius: 1rem;
+      padding: 3rem;
+      width: 500px;
+      border: 1px solid #eee;
+    }
+
+    .loginForm {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+
+  .userTable {
+    max-height: 300px; /* Set a maximum height for the table body to enable scrolling */
+    overflow-y: auto;
+    .table {
+      width: 100%; /* Make the table take the full width of its container */
+      border-collapse: collapse; /* Combine borders between cells */
+    }
+
+    .table thead {
+      position: sticky; /* Make the header sticky */
+      top: 0; /* Stick to the top */
+      background-color: #f8f9fa; /* Add a background color for the header */
+    }
+
+    /* Style for table cells */
+    .table th,
+    .table td {
+      padding: 8px; /* Add padding to cells */
+      border: 1px solid #ccc; /* Add borders between cells */
+    }
+  }
+}

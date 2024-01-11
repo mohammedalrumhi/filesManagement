@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
-import styles from "./navbar.module.scss";
 import { AuthContext } from "../../contexts/AuthContext";
 import { auth } from "../../firebase/firebase";
 import UserModel from "../models/user/UserModel";
 import GroupModel from "../models/group/GroupModel";
+
 const NavBar = ({ setUpdateFeed, updateFeed }) => {
   const { dispatch, currentUser } = useContext(AuthContext);
 
@@ -17,36 +17,34 @@ const NavBar = ({ setUpdateFeed, updateFeed }) => {
 
   return (
     <>
-      <div className={styles.navbar}>
-        <div className={styles.container}>
-          <div className={styles.userControl}>
-            <div className={styles.logo}>
-              <img src="/logo.svg" width={70} />
+      <div className="sticky top-0 z-40 w-full backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 dark:border-slate-50/[0.06] bg-white/95 supports-backdrop-blur:bg-white/60 dark:bg-transparent">
+        <div className="container mx-auto flex justify-between items-center py-4">
+          <div className="flex items-center">
+            <div className="mr-4">
+              <img src="/logo.svg" width={70} alt="Logo" />
             </div>
-            <div className={styles.userName}>{currentUser.auth.email}</div>
+            <div>{currentUser.auth.email}</div>
           </div>
 
-          <div className={styles["button-controls"]}>
+          <div className="flex items-center">
             <button
-              className={styles["controls-logout"]}
+              className="mr-4 flex items-center"
               onClick={() => setShowGroup(true)}
             >
-              المجموعات <img src="/header/group.svg" alt="groups" />
+              <span className="mr-1">المجموعات</span>
+              <img src="/header/group.svg" alt="groups" />
             </button>
 
             <button
-              className={styles["controls-logout"]}
+              className="mr-4 flex items-center"
               onClick={() => setShow(true)}
             >
-              المستخدمين <img src="/header/users.svg" alt="users" />
+              <span className="mr-1">المستخدمين</span>
+              <img src="/header/users.svg" alt="users" />
             </button>
 
-            {/* logout buttom  */}
-            <button
-              className={styles["controls-logout"]}
-              onClick={handleLogout}
-            >
-              تسجيل الخروج
+            <button className="flex items-center" onClick={handleLogout}>
+              <span className="mr-1">تسجيل الخروج</span>
               <img src="/header/logout.svg" alt="logout" />
             </button>
           </div>
