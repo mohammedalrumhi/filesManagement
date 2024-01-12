@@ -46,7 +46,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen max-h-screen max-w-screen flex items-center justify-center overflow-hidden ">
+    <div className="min-h-screen max-h-screen max-w-screen flex items-center justify-center px-4 overflow-hidden ">
       <div className="max-w-md w-full space-y-8">
         <div className="flex flex-col justify-center items-center">
           <img src="/logo.svg" width={90} alt="Logo" />
