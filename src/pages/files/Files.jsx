@@ -5,13 +5,14 @@ import { handleFileUpload } from "../../firebase/firebase";
 import useGroup from "../../hooks/useGroup";
 import useFiles from "../../hooks/useFiles";
 import { checkFileType } from "../../helper/CheckFile";
-import { useDropzone } from "react-dropzone";
+import UploadFileModel from "../../components/models/uploadFile/UploadFileModel";
 const Files = () => {
   const navigate = useNavigate();
   const { groupId } = useParams();
 
   const [updateFeed, setUpdateFeed] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isFileNameOpen, setIsFileNameOpen] = useState(false);
+
   const { data: mygroup, error, loading } = useGroup("groups", groupId);
   const {
     data: filesData,
@@ -19,18 +20,6 @@ const Files = () => {
     loading: filesLoading,
     mutateData,
   } = useFiles(groupId);
-
-  const onDrop = useCallback(async (acceptedFiles) => {
-    await handleFileUpload(acceptedFiles, groupId, handleUploadProgress);
-
-    mutateData();
-    setUploadProgress(0);
-  }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
-  const handleUploadProgress = (progress) => {
-    setUploadProgress(progress);
-  };
 
   return (
     <>
@@ -84,7 +73,7 @@ const Files = () => {
                     </div>
                     <div className="w-40 overflow-hidden h-6">
                       <p className="whitespace-no-wrap text-ellipsis">
-                        {file.name}
+                        {file.title}
                       </p>
                     </div>
                     <div className="w-full mx-auto">
@@ -113,56 +102,8 @@ const Files = () => {
                   </div>
                 </div>
               ))}
-              <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                {isDragActive ? (
-                  <p>Drop the files here ...</p>
-                ) : (
-                  <div className="border-dotted border-4 p-6 mt-3 w-56">
-                    <div className="w-40 overflow-hidden">
-                      <p className="whitespace-no-wrap text-center">
-                        إضافة ملف جديد
-                      </p>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <div className="w-20 h-20">
-                        {uploadProgress > 0 ? (
-                          <div className="flex items-center justify-center">
-                            <div className="w-24 h-24 border-4 border-t-4 border-gray-200 rounded-full animate-spin"></div>
-                            <div className="absolute flex items-center justify-center w-24 h-24">
-                              <span className="text-4xl font-bold">
-                                {Math.floor(uploadProgress)}%
-                              </span>
-                            </div>
-                          </div>
-                        ) : (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="w-20 h-20"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M12 4.5v15m7.5-7.5h-15"
-                            />
-                          </svg>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* <div
-                className="flex flex-col items-center m-3 cursor-pointer "
-                key="add-file"
-                onClick={() => handleAddFile()}
-              >
-                <div className="border-dotted border-4 p-4 w-56">
+              <div onClick={() => setIsFileNameOpen(true)}>
+                <div className="border-dotted border-4 p-6 mt-3 w-56">
                   <div className="w-40 overflow-hidden">
                     <p className="whitespace-no-wrap text-center">
                       إضافة ملف جديد
@@ -170,30 +111,37 @@ const Files = () => {
                   </div>
                   <div className="flex items-center justify-center">
                     <div className="w-20 h-20">
-                      {uploadProgress > 0 ? (
-                        <div className="flex items-center justify-center">
-                          <div className="w-24 h-24 border-4 border-t-4 border-gray-200 rounded-full animate-spin"></div>
-                          <div className="absolute flex items-center justify-center w-24 h-24">
-                            <span className="text-4xl font-bold">
-                              {Math.floor(uploadProgress)}%
-                            </span>
-                          </div>
-                        </div>
-                      ) : (
-                        <img
-                          src="/header/add.svg"
-                          alt="Add File"
-                          className="w-full h-full cursor-pointer"
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-20 h-20"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M12 4.5v15m7.5-7.5h-15"
                         />
-                      )}
+                      </svg>
                     </div>
                   </div>
                 </div>
-              </div> */}
+              </div>
             </div>
           </div>
         )}
       </div>
+      {isFileNameOpen && (
+        <UploadFileModel
+          isShow={isFileNameOpen}
+          setShow={setIsFileNameOpen}
+          groupId={groupId}
+        
+          update={mutateData}
+        />
+      )}
     </>
   );
 };

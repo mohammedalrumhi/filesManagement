@@ -111,7 +111,6 @@ export const deleteDocumentById = async (collectionName, id) => {
   }
 };
 
-
 export const getCollections = async (name) => {
   try {
     const collectionsRef = collection(firestore, name); // Replace 'your_root_collection' with your actual root collection
@@ -249,10 +248,15 @@ export const getCollectionsWithCondition = async (name, valueToCheck) => {
 //   }
 // };
 
-export const handleFileUpload = async (files, groupUid, progressCallback) => {
+export const handleFileUpload = async (
+  files,
+  groupUid,
+  progressCallback,
+  displayName
+) => {
   console.log("called function file upload");
-  if (!files || !Array.isArray(files) || files.length === 0) {
-    throw new Error("No files to upload");
+  if (!files) {
+    throw new Error("No file to upload");
   }
 
   const storageRef = ref(storage, groupUid);
@@ -283,6 +287,7 @@ export const handleFileUpload = async (files, groupUid, progressCallback) => {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             const filesRef = doc(collection(firestore, "files"));
             await setDoc(filesRef, {
+              title: displayName,
               name: randomFileName,
               path: downloadURL,
               timestamp: serverTimestamp(),
