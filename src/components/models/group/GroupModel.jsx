@@ -1,17 +1,26 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import styles from "./group.module.scss";
 import { createGroup, getCollections } from "../../../firebase/firebase";
 import { serverTimestamp } from "firebase/firestore";
 import Select from "react-select";
+import { AuthContext } from "../../../contexts/AuthContext";
+import useGroups from "../../../hooks/useGroups";
 function GroupModel({ isShow, setShow, setUpdateFeed, updateFeed }) {
+  const { currentUser } = useContext(AuthContext);
   const [name, setName] = useState("");
   const [allList, setAllList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const {
+    groups,
+    loading: l,
+    error: e,
+    refreshGroups,
+  } = useGroups("groups", currentUser.auth.uid);
 
   const restModel = () => {
     setName("");
@@ -35,8 +44,8 @@ function GroupModel({ isShow, setShow, setUpdateFeed, updateFeed }) {
     } catch (erorr) {
       setError("خطا في إضافة المجموعة");
     }
-
     setLoading(false);
+    refreshGroups();
   };
 
   const handleSelectChange = (selectedValues) => {

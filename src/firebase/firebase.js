@@ -11,6 +11,7 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import {
   getFirestore,
   setDoc,
+  deleteDoc,
   doc,
   collection,
   getDocs,
@@ -93,6 +94,23 @@ export const updateGroup = async (groupId, newData) => {
     throw error;
   }
 };
+
+export const deleteDocumentById = async (collectionName, id) => {
+  try {
+    const documentRef = doc(firestore, collectionName, id);
+    const documentSnapshot = await getDoc(documentRef);
+
+    if (documentSnapshot.exists()) {
+      await deleteDoc(documentRef);
+      console.log(`Document with ID ${id} deleted successfully`);
+    } else {
+      console.error(`Document with ID ${id} doesn't exist`);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
 
 export const getCollections = async (name) => {
   try {
