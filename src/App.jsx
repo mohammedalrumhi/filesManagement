@@ -28,14 +28,7 @@ function App() {
               </RequiredAuth>
             }
           ></Route>
-          <Route
-            path="/login"
-            element={
-              <IsLogged>
-                <Auth />
-              </IsLogged>
-            }
-          ></Route>
+          <Route path="/login" element={<Auth />}></Route>
           <Route
             path="/files/:groupId"
             element={
