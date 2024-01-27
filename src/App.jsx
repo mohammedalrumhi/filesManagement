@@ -31,7 +31,7 @@ function App() {
           ></Route>
 
           <Route
-            path="/login"
+            path="login"
             exact
             element={
               <IsLogged>
