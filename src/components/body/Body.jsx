@@ -44,6 +44,26 @@ const Body = ({ updateFeed }) => {
     refreshGroups();
   };
 
+  const gradientColors = ["#8de9d5", "#32c4c0"];
+  const gradientStyle = {
+    background: `linear-gradient(45deg, ${gradientColors[0]}, ${gradientColors[1]})`,
+    borderRadius: "5px",
+    padding: "10px 20px",
+    color: "#fff",
+    textDecoration: "none",
+    transition: "transform 0.3s",
+  };
+
+  const gradientColorsBg = ["#e9f1ef", "#e7edee"];
+  const gradientStyleBg = {
+    background: `linear-gradient(45deg, ${gradientColorsBg[0]}, ${gradientColorsBg[1]})`,
+    borderRadius: "5px",
+    padding: "10px 20px",
+    color: "#fff",
+    textDecoration: "none",
+    transition: "transform 0.3s",
+  };
+
   const memoizedGroups = useMemo(() => groups, [groups]);
 
   if (loading || memoizedGroups === null) {
@@ -66,20 +86,42 @@ const Body = ({ updateFeed }) => {
 
   return (
     <>
+      <div className="py-2 my-2 mx-5 px-4 border border-spacing-3 rounded-lg">
+        {isAdmin ? (
+          <div className="flex flex-col gap-2">
+            <div className="text-2xl bg-gradient-to-r from-yellow-400 to-yellow-600 text-transparent bg-clip-text">
+              {" "}
+              {currentUser.auth.email} مرحبا بك{" "}
+            </div>
+            <div className="font-bold">حسابك يملك صلاحيات الأستاذ</div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-transparent bg-clip-text">
+              {" "}
+              {currentUser.auth.email} مرحبا بك بكم
+            </div>
+            <div className="font-bold">حسابك يملك صلاحيات الطالب</div>
+          </div>
+        )}
+      </div>
+
       <div className="p-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {memoizedGroups.map((group, i) => (
             <div
               className="bg-white rounded-md shadow-md overflow-hidden"
+              style={gradientStyleBg}
               key={i}
             >
               <div className="p-4">
-                <h5 className="text-lg font-bold mb-2">{group.name}</h5>
+                <h5 className="text-lg font-bold mb-2 text-green-900">{group.name}</h5>
                 <p className="text-gray-600">
                   مجموعة تحتوي على ملفات تتعلق بعنوانها
                 </p>
                 <Link
-                  className="inline-block px-4 py-2 border border-black rounded text-black hover:scale-105"
+                  className="inline-block px-4 py-2 rounded"
+                  style={gradientStyle}
                   to={`/files/${group.id}`}
                 >
                   دخول
@@ -93,7 +135,7 @@ const Body = ({ updateFeed }) => {
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
-                      stroke="currentColor"
+                      stroke="#000"
                       className="w-6 h-6 cursor-pointer"
                     >
                       <path
@@ -108,7 +150,7 @@ const Body = ({ updateFeed }) => {
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
-                      stroke="currentColor"
+                      stroke="#000"
                       className="w-6 h-6"
                     >
                       <path

@@ -28,9 +28,7 @@ const NavBar = ({ setUpdateFeed, updateFeed }) => {
               <img src="/logo.svg" width={70} alt="Logo" />
             </div>
 
-            <div className="py-2 px-4 border border-spacing-3 rounded-lg">
-              {currentUser.auth.email}
-            </div>
+    
           </div>
 
           <div className="flex items-center gap-7 md:gap-4">
