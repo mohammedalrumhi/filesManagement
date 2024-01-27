@@ -6,6 +6,8 @@ import {
   ref,
   getDownloadURL,
   uploadBytesResumable,
+  deleteObject,
+  listAll,
 } from "firebase/storage";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import {
@@ -74,7 +76,7 @@ export const createGroup = async (data) => {
 
     await setDoc(groupRef, data);
 
-    console.log("group created successfully!");
+    //console.log("group created successfully!");
     // return userCredential.user;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -256,7 +258,7 @@ export const handleFileUpload = async (
 ) => {
   console.log("called function file upload");
   if (!files) {
-    throw new Error("No file to upload");
+    throw new Error("No files to upload");
   }
 
   const storageRef = ref(storage, groupUid);
@@ -306,6 +308,35 @@ export const handleFileUpload = async (
       console.error("Error uploading file:", error);
       throw error;
     }
+  }
+};
+
+export const deleteFile = async (fileId, groupUid) => {
+  try {
+    // Delete document from Firestore
+    const filesRef = doc(collection(firestore, "files"), fileId);
+    await deleteDoc(filesRef);
+
+    // Delete file from Firebase Storage
+    const fileRef = ref(storage, `${groupUid}`);
+
+
+    
+      const listResult = await listAll(fileRef);
+      const items = listResult.items;
+  
+      // Delete each item (file) in the folder
+      await Promise.all(items.map(async (item) => {
+        await deleteObject(item);
+        console.log(`Deleted file: ${item.name}`);
+      }));
+
+   // await deleteObject(fileRef);
+
+    console.log("File and document deleted successfully.");
+  } catch (error) {
+    console.error("Error deleting file and document:", error);
+    throw error;
   }
 };
 

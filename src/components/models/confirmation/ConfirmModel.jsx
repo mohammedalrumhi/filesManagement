@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
@@ -15,11 +14,11 @@ function ConfirmModel({ isShow, setShow, deleteFucntion, update }) {
       >
         <Modal.Header>
           <Modal.Title id="example-modal-sizes-title-lg">
-            حذف المجموعة
+            تأكيد الحذف
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>هل تريد حذف المجموعة حقا؟</p>
+          <p>هل تريد الحذف حقا؟</p>
         </Modal.Body>
         <Modal.Footer>
           <Button

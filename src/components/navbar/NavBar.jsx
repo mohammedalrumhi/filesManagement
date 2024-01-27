@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { auth } from "../../firebase/firebase";
+import { auth, checkUserRole } from "../../firebase/firebase";
 import UserModel from "../models/user/UserModel";
 import GroupModel from "../models/group/GroupModel";
 
@@ -9,6 +9,8 @@ const NavBar = ({ setUpdateFeed, updateFeed }) => {
 
   const [show, setShow] = useState(false);
   const [showGroup, setShowGroup] = useState(false);
+
+  //const isAdmin = checkUserRole("users", currentUser.auth.uid);
 
   const handleLogout = async () => {
     await auth.signOut();
@@ -49,7 +51,6 @@ const NavBar = ({ setUpdateFeed, updateFeed }) => {
                 />
               </svg>
             </button>
-
             <button
               className="mr-4 flex items-center gap-2"
               onClick={() => setShow(true)}

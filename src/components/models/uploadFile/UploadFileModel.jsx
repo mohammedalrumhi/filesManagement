@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { handleFileUpload } from "../../../firebase/firebase";
@@ -15,6 +15,14 @@ function UploadFileModel({ isShow, setShow, groupId, update }) {
     setUploadProgress(progress);
   };
 
+  const handleFileChange = useCallback(
+    (e) => {
+      e.preventDefault();
+      setSelectedFile(e.target.files);
+    },
+    [setSelectedFile]
+  );
+
   const handleAddFile = async (e) => {
     e.preventDefault();
 
@@ -22,14 +30,17 @@ function UploadFileModel({ isShow, setShow, groupId, update }) {
 
     try {
       await handleFileUpload(selectedFile, groupId, handleUploadProgress, name);
+      update();
     } catch (error) {
       setError(error.message);
       console.log(error.message);
+
       setLoading(false);
     }
-    update();
 
     setMessage("تم رفع الملف بنجاح");
+    setName("");
+    setSelectedFile([]);
     setLoading(false);
   };
   return (
@@ -57,6 +68,7 @@ function UploadFileModel({ isShow, setShow, groupId, update }) {
                   type="text"
                   className="form-control"
                   id="name"
+                  value={name}
                   placeholder="اسم الملف"
                   onChange={(e) => setName(e.target.value)}
                 />
@@ -68,7 +80,7 @@ function UploadFileModel({ isShow, setShow, groupId, update }) {
                   className="form-control"
                   id="file"
                   placeholder="الملف"
-                  onChange={(el) => setSelectedFile(el.target.files)}
+                  onChange={handleFileChange}
                 />
               </div>
               {loading && (

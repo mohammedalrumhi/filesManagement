@@ -11,7 +11,9 @@ const useFiles = (groupId) => {
     setLoading(true);
     try {
       const querySnapshot = await getDataByGroupId(groupId);
-      const filesData = querySnapshot.docs.map((doc) => doc.data());
+      const filesData = querySnapshot.docs.map((doc) => {
+        return { id: doc.id, ...doc.data() };
+      });
       setLoading(false);
       return filesData;
     } catch (error) {
@@ -45,7 +47,9 @@ const useFiles = (groupId) => {
   const updateData = async () => {
     try {
       const updatedData = await getDataByGroupId(groupId); // Fetch updated data
-      const filesData = updatedData.docs.map((doc) => doc.data());
+      const filesData = updatedData.docs.map((doc) => {
+        return { id: doc.id, ...doc.data() };
+      });
       setData(filesData); // Update the data state
       mutate(["files", groupId], filesData, false);
       // Update the SWR cache without revalidating
