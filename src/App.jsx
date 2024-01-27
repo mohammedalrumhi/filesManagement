@@ -31,7 +31,7 @@ function App() {
           ></Route>
 
           <Route
-            path="login"
+            path="/login"
             exact
             element={
               <IsLogged>
@@ -48,6 +48,7 @@ function App() {
               </RequiredAuth>
             }
           ></Route>
+          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </BrowserRouter>
       <div className="blob w-60 h-60 md:w-[800px] md:h-[800px] rounded-[999px] absolute top-[100px] right-0 -z-10 blur-3xl bg-opacity-60 opacity-35 bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200"></div>
