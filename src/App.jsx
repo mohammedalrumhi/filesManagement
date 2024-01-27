@@ -21,6 +21,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route
+            index={true}
             path="/"
             element={
               <RequiredAuth>
