@@ -12,6 +12,16 @@ const Auth = () => {
     errorMessage: "",
   });
 
+  const gradientColors = ["#8de9d5", "#32c4c0"];
+  const gradientStyle = {
+    background: `linear-gradient(45deg, ${gradientColors[0]}, ${gradientColors[1]})`,
+    borderRadius: "5px",
+    padding: "10px 20px",
+    color: "#fff",
+    textDecoration: "none",
+    transition: "transform 0.3s",
+  };
+
   const { dispatch: authDispatch } = useContext(AuthContext);
 
   const { email, password, errorMessage, loading } = state;
@@ -106,7 +116,8 @@ const Auth = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-black text-sm font-medium rounded-md text-black bg-white hover:bg-black hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+              style={gradientStyle}
+              className=" w-full flex justify-center py-2 px-4rounded-md text-black bg-white"
               disabled={loading}
             >
               دخول
