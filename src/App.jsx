@@ -1,13 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import "./App.css";
-
 import Auth from "./pages/auth/Auth";
 import Home from "./pages/home/Home";
 import { useContext } from "react";
 import { AuthContext } from "./contexts/AuthContext";
 import Files from "./pages/files/Files";
-
+import "./App.css";
 function App() {
   const { currentUser } = useContext(AuthContext);
 

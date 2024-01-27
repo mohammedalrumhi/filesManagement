@@ -1,1 +1,8 @@
+@font-face {
+  font-family: "Amiri";
+  src: url("/fonts/Amiri-Regular.ttf") format("truetype");
+}
 
+body {
+  font-family: "Amiri", sans-serif; /* Use Amiri as default font */
+}
